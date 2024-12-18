@@ -8,10 +8,40 @@ class GroupsController < ApplicationController
     if @group.save
       render json: @group, status: :created
     else
-      # Log the errors for better debugging
+
       Rails.logger.error "Failed to create group: #{@group.errors.full_messages}"
       
       render json: { error: 'Unable to create group', details: @group.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def index
+    @groups = @current_user.groups
+    render json: @groups
+  end
+
+  def show
+    @group = @current_user.groups.find(params[:id])
+    render json: @group
+  end
+
+  def update
+    @group = @current_user.groups.find(params[:id])  
+
+    if @group.update(group_params)
+      render json: @group, status: :ok
+    else
+      render json: { error: 'Unable to update group', details: @group.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @group = @current_user.groups.find(params[:id]) 
+
+    if @group.destroy
+      render json: { message: 'Group deleted successfully' }, status: :ok
+    else
+      render json: { error: 'Unable to delete group' }, status: :unprocessable_entity
     end
   end
 
