@@ -38,14 +38,26 @@ class GroupMembershipsController < ApplicationController
 
   def destroy
     @group = Group.find_by(id: params[:group_id])
-    @group_member = @group.group_memberships.find_by(user: @current_user)
   
-    if @group_member&.destroy
-      render json: { message: 'User removed from group' }, status: :ok
+    if @group
+      # Find the group membership by user_id (from URL) and group_id (from params)
+      @group_member = @group.group_memberships.find_by(user_id: params[:id])
+  
+      if @group_member
+        if @group_member.destroy
+          render json: { message: 'User removed from group' }, status: :ok
+        else
+          render json: { error: 'Unable to remove user from group' }, status: :unprocessable_entity
+        end
+      else
+        render json: { error: 'Group membership not found' }, status: :not_found
+      end
     else
-      render json: { error: 'Unable to remove user from group' }, status: :unprocessable_entity
+      render json: { error: 'Group not found' }, status: :not_found
     end
   end
+  
+  
 
   private
 
