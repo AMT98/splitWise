@@ -3,20 +3,22 @@ class GroupsController < ApplicationController
 
   def create
     @group = Group.new(group_params)
-    @group.user = @current_user  # Associate the group with the current user
+    @group.creator = @current_user 
+    @group.user_id = @current_user.id 
 
     if @group.save
+      GroupMembership.create!(user: @current_user, group: @group)
       render json: @group, status: :created
     else
-
-      Rails.logger.error "Failed to create group: #{@group.errors.full_messages}"
-      
       render json: { error: 'Unable to create group', details: @group.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   def index
-    @groups = @current_user.groups
+    @groups = @current_user.groups.includes(:group_memberships)
+  
+    Rails.logger.info "Groups for current_user #{@current_user.id}: #{@groups.pluck(:id, :name)}"
+  
     render json: @groups
   end
 
@@ -42,6 +44,29 @@ class GroupsController < ApplicationController
       render json: { message: 'Group deleted successfully' }, status: :ok
     else
       render json: { error: 'Unable to delete group' }, status: :unprocessable_entity
+    end
+  end
+
+  def create_group
+    user = User.find(params[:user_id]) 
+    group = user.created_groups.create!(group_params.merge(user_id: user.id))
+    render json: group, status: :created
+  end
+
+  def group_users
+    @group = Group.find_by(id: params[:id])
+
+    if @group
+      user_ids = @group.users.select(:id, :email)
+      total_users = user_ids.size
+
+      render json: {
+        group_name: @group.name,
+        total_users: total_users,
+        user_ids: user_ids
+      }, status: :ok
+    else
+      render json: { error: 'Group not found' }, status: :not_found
     end
   end
 

@@ -1,4 +1,6 @@
 class AuthController < ApplicationController
+  skip_before_action :authenticate_user, only: [:signup, :login]
+  
   def signup
     user = User.new(user_params)
 
@@ -27,7 +29,7 @@ class AuthController < ApplicationController
   end
 
   def encode_token(payload)
-    JWT.encode(payload, Rails.application.credentials.secret_key_base)
+    JWT.encode(payload, Rails.application.credentials.secret_key_base, 'HS256')
   end
 
 end
