@@ -1,6 +1,16 @@
 class BillsController < ApplicationController
   before_action :authenticate_user
   before_action :set_bill, only: [:update, :destroy]
+  
+  def user_bills
+    @bills = Bill.where(payer_id: @current_user.id)
+
+    if @bills.any?
+      render json: @bills, status: :ok
+    else
+      render json: { message: 'No bills found for this user' }, status: :not_found
+    end
+  end
 
   def create
     @bill = Bill.new(bill_params)
@@ -26,20 +36,10 @@ class BillsController < ApplicationController
     render json: { message: 'Bill deleted successfully' }, status: :no_content
   end
 
-  def user_bills
-    @bills = Bill.where(payer_id: @current_user.id)
-
-    if @bills.any?
-      render json: @bills, status: :ok
-    else
-      render json: { message: 'No bills found for this user' }, status: :not_found
-    end
-  end
-
   private
 
   def set_bill
-    @bill = Bill.find(params[:id])
+    @bill = Bill.find_by(id: params[:id])
     render json: { error: 'Bill not found' }, status: :not_found if @bill.nil?
   end
 

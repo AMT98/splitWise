@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   delete '/groups/:group_id/memberships/:id', to: 'group_memberships#destroy'
   get '/groups/:id/users', to: 'groups#group_users'
   
+  get '/users/:user_id/bills', to: 'bills#user_bills'
   post '/bills', to: 'bills#create'
   patch '/bills/:id', to: 'bills#update'
   delete '/bills/:id', to: 'bills#destroy'
