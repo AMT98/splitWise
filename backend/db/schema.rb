@@ -10,9 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_18_203140) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_20_150448) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "bills", force: :cascade do |t|
+    t.string "title", null: false
+    t.decimal "amount", null: false
+    t.string "currency", default: "USD"
+    t.bigint "payer_id", null: false
+    t.bigint "group_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["group_id"], name: "index_bills_on_group_id"
+    t.index ["payer_id"], name: "index_bills_on_payer_id"
+  end
 
   create_table "group_memberships", force: :cascade do |t|
     t.bigint "group_id", null: false
@@ -42,6 +54,8 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_18_203140) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "bills", "groups"
+  add_foreign_key "bills", "users", column: "payer_id"
   add_foreign_key "group_memberships", "groups"
   add_foreign_key "group_memberships", "users"
   add_foreign_key "groups", "users"
