@@ -1,9 +1,10 @@
 class BillsController < ApplicationController
   before_action :authenticate_user
+  before_action :set_user, only: [:user_bills]
   before_action :set_bill, only: [:update, :destroy]
   
   def user_bills
-    @bills = Bill.where(payer_id: @current_user.id)
+    @bills = Bill.where(payer_id: @user.id)
 
     if @bills.any?
       render json: @bills, status: :ok
@@ -11,6 +12,7 @@ class BillsController < ApplicationController
       render json: { message: 'No bills found for this user' }, status: :not_found
     end
   end
+
 
   def create
     @bill = Bill.new(bill_params)
@@ -24,6 +26,7 @@ class BillsController < ApplicationController
   end
 
   def update
+    Rails.logger.debug "Updating bill with ID: #{@bill.id}"
     if @bill.update(bill_params)
       render json: @bill, status: :ok
     else
@@ -37,6 +40,9 @@ class BillsController < ApplicationController
   end
 
   private
+  def set_user
+    @user = User.find(params[:user_id])
+  end
 
   def set_bill
     @bill = Bill.find_by(id: params[:id])
