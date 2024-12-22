@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_20_163358) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_22_182232) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -53,7 +53,8 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_20_163358) do
     t.boolean "paid", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "bill_id"
+    t.integer "bill_id", null: false
+    t.index ["bill_id"], name: "index_payments_on_bill_id"
     t.index ["payer_id"], name: "index_payments_on_payer_id"
     t.index ["receiver_id"], name: "index_payments_on_receiver_id"
   end
@@ -72,6 +73,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_20_163358) do
   add_foreign_key "group_memberships", "users"
   add_foreign_key "groups", "users"
   add_foreign_key "groups", "users", column: "creator_id"
+  add_foreign_key "payments", "bills"
   add_foreign_key "payments", "users", column: "payer_id"
   add_foreign_key "payments", "users", column: "receiver_id"
 end
