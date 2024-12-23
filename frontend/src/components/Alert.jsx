@@ -20,23 +20,18 @@ const Alert = () => {
   }, [isVisible, dispatch]);
 
   if (!isVisible) return null;
-
+  const borderColor =
+    type === "success" ? "border-green-600" : "border-red-600";
+  const iconColor = type === "success" ? "text-green-600" : "text-red-600";
   return (
     <div
       role="alert"
-      className="fixed bottom-4 left-4 border-green-600 z-50 rounded-xl border p-4 bg-white shadow-lg flex items-start gap-4"
+      className={`fixed bottom-4 left-4 z-50 rounded-xl border p-4 bg-white shadow-lg flex items-start gap-4 ${borderColor}`}
     >
       <div className="flex items-start gap-4">
-        {type === "success" && (
-          <span className="text-green-600">
-            <CiSquareCheck />
-          </span>
-        )}
-        {type === "error" && (
-          <span className="text-red-600">
-            <MdErrorOutline />
-          </span>
-        )}
+        <span className={iconColor}>
+          {type === "success" ? <CiSquareCheck /> : <MdErrorOutline />}
+        </span>
 
         <div className="flex-1">
           <strong className="block font-medium text-gray-900">{message}</strong>
