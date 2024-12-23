@@ -1,12 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
 import { AuthApi } from "../API/api";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { signIn } from "../reducers/isLogged";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -16,14 +19,18 @@ const Login = () => {
         password,
       });
 
-      console.log("Full Response:", response.data);
-      const { token, user } = response.data;
-      setMessage(`Welcome, ${user.email}!`);
+      const { token } = response.data;
+
+      dispatch(signIn());
+      setMessage(`Welcome, ${response.data.user.email}!`);
       setEmail("");
       setPassword("");
+      localStorage.setItem("token", token);
+      localStorage.setItem("email", response.data.user.email);
       navigate("/");
 
-      localStorage.setItem("token", token);
+      console.log("Full Response:", response.data);
+      console.log(`Welcome, ${response.data.user.email}!`);
     } catch (error) {
       console.error("Error during login:", error);
 

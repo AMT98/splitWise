@@ -2,6 +2,8 @@ import { Link, useNavigate } from "react-router-dom";
 import Alert from "./Alert";
 import { useState } from "react";
 import { AuthApi } from "../API/api";
+import { useDispatch } from "react-redux";
+import { signIn } from "../reducers/isLogged";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -9,6 +11,7 @@ const Signup = () => {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -18,11 +21,16 @@ const Signup = () => {
         password,
         passwordConfirmation,
       });
-      console.log(response.data.message);
       const { token, user } = response.data;
       localStorage.setItem("token", token);
+      localStorage.setItem("email", email);
+
+      dispatch(signIn());
       setMessage(`Welcome, ${user.email}!`);
       navigate("/");
+
+      console.log(response.data.message);
+      console.log(message);
     } catch (error) {
       console.error(error);
       setMessage(error.response?.data.error?.join(",") || "Signup failed");
@@ -97,6 +105,8 @@ const Signup = () => {
                   id="password"
                   name="password"
                   type="password"
+                  value={passwordConfirmation}
+                  onChange={(e) => setPasswordConfirmation(e.target.value)}
                   required
                   autoComplete="current-password"
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"

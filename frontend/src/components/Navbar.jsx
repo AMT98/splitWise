@@ -1,8 +1,13 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { signIn, signOut } from "../reducers/isLogged";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isLoggedIn = useSelector((state) => state.isLoggedIn);
+  const userEmail = localStorage.getItem("email");
+  const dispatch = useDispatch();
 
   return (
     <header className="w-full bg-white fixed top-0 left-0 z-50 shadow-md">
@@ -14,17 +19,38 @@ const Navbar = () => {
             </h1>
           </Link>
         </div>
+
         <div className="hidden md:flex gap-4">
-          <Link to="/login">
-            <button className="border p-2 bg-indigo-500 text-white font-bold rounded-md hover:bg-indigo-600 transition-colors">
-              Login
-            </button>
-          </Link>
-          <Link to="/signup">
-            <button className="border p-2 bg-gray-500 text-white font-bold rounded-md hover:bg-gray-600 transition-colors">
-              Sign Up
-            </button>
-          </Link>
+          {isLoggedIn ? (
+            <>
+              <span className="text-sm text-gray-700">
+                Welcome, {userEmail}!
+              </span>
+              <button
+                onClick={() => {
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("email");
+                  dispatch(signOut());
+                }}
+                className="border p-2 bg-red-500 text-white font-bold rounded-md hover:bg-red-600 transition-colors"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login">
+                <button className="border p-2 bg-indigo-500 text-white font-bold rounded-md hover:bg-indigo-600 transition-colors">
+                  Login
+                </button>
+              </Link>
+              <Link to="/signup">
+                <button className="border p-2 bg-gray-500 text-white font-bold rounded-md hover:bg-gray-600 transition-colors">
+                  Sign Up
+                </button>
+              </Link>
+            </>
+          )}
         </div>
 
         <div className="md:hidden flex items-center">
@@ -52,16 +78,31 @@ const Navbar = () => {
 
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white shadow-lg p-4">
-          <Link to="/login">
-            <button className="block w-full text-center p-4 bg-indigo-500 text-white font-bold rounded-md mb-4 hover:bg-indigo-600">
-              Login
+          {isLoggedIn ? (
+            <button
+              onClick={() => {
+                localStorage.removeItem("token");
+                localStorage.removeItem("email");
+                dispatch(signIn());
+              }}
+              className="block w-full text-center p-4 bg-red-500 text-white font-bold rounded-md mb-4 hover:bg-red-600"
+            >
+              Logout
             </button>
-          </Link>
-          <Link to="/signup">
-            <button className="block w-full text-center p-4 bg-gray-500 text-white font-bold rounded-md hover:bg-gray-600">
-              Sign Up
-            </button>
-          </Link>
+          ) : (
+            <>
+              <Link to="/login">
+                <button className="block w-full text-center p-4 bg-indigo-500 text-white font-bold rounded-md mb-4 hover:bg-indigo-600">
+                  Login
+                </button>
+              </Link>
+              <Link to="/signup">
+                <button className="block w-full text-center p-4 bg-gray-500 text-white font-bold rounded-md mb-4 hover:bg-gray-600">
+                  Sign Up
+                </button>
+              </Link>
+            </>
+          )}
         </div>
       )}
     </header>
