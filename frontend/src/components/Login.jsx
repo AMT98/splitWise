@@ -4,11 +4,11 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { signIn } from "../reducers/isLogged";
 import { setLoading, setLoaded } from "../reducers/isLoading";
+import { showAlert } from "../reducers/alert";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -21,12 +21,14 @@ const Login = () => {
         password,
       });
       dispatch(setLoaded());
-      const { token } = response.data;
-
+      const { token, user } = response.data;
       dispatch(signIn());
-      setMessage(`Welcome, ${response.data.user.email}!`);
-      setEmail("");
-      setPassword("");
+      dispatch(
+        showAlert({
+          message: `Welcome, ${user.email}!`,
+          type: "success",
+        })
+      );
       localStorage.setItem("token", token);
       localStorage.setItem("email", response.data.user.email);
       navigate("/");
@@ -35,13 +37,13 @@ const Login = () => {
       console.log(`Welcome, ${response.data.user.email}!`);
     } catch (error) {
       console.error("Error during login:", error);
-
-      const errorMessage =
-        error.response?.data.error ||
-        error.response?.data.message ||
-        "Login failed";
-
-      setMessage(errorMessage);
+      dispatch(setLoaded());
+      dispatch(
+        showAlert({
+          message: "Login failed! Please try again.",
+          type: "error",
+        })
+      );
     }
   };
 

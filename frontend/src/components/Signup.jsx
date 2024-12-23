@@ -1,16 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
-import Alert from "./Alert";
 import { useState } from "react";
 import { AuthApi } from "../API/api";
 import { useDispatch } from "react-redux";
 import { signIn } from "../reducers/isLogged";
 import { setLoading, setLoaded } from "../reducers/isLoading";
+import { showAlert } from "../reducers/alert";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -31,14 +30,24 @@ const Signup = () => {
       localStorage.setItem("email", email);
 
       dispatch(signIn());
-      setMessage(`Welcome, ${user.email}!`);
+      dispatch(
+        showAlert({
+          message: `Welcome, ${user.email}!`,
+          type: "success",
+        })
+      );
       navigate("/");
 
       console.log(response.data.message);
-      console.log(message);
     } catch (error) {
       console.error(error);
-      setMessage(error.response?.data.error?.join(",") || "Signup failed");
+      dispatch(setLoaded());
+      dispatch(
+        showAlert({
+          message: "Login failed! Please try again.",
+          type: "error",
+        })
+      );
     }
   };
   return (
@@ -140,7 +149,6 @@ const Signup = () => {
           </p>
         </div>
       </div>
-      <Alert />
     </>
   );
 };

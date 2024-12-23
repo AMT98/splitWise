@@ -5,12 +5,14 @@ import Home from "./components/Home";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
 import Loader from "./components/Loader";
+import Alert from "./components/Alert";
 
 import "./App.css";
 
 function App() {
   return (
     <Router>
+      <Alert />
       <Navbar />
       <Loader />
       <Routes>

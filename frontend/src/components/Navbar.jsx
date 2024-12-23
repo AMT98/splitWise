@@ -11,7 +11,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
 
   return (
-    <header className="w-full bg-white fixed top-0 left-0 z-50 shadow-md">
+    <header className="w-full bg-white fixed top-0 left-0 z-40 shadow-md">
       <nav className="container mx-auto p-4 flex justify-between items-center">
         <div>
           <Link to="/">
