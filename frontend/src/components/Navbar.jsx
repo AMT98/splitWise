@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { signIn, signOut } from "../reducers/isLogged";
+import { signOut } from "../reducers/isLogged";
 import { setLoading, setLoaded } from "../reducers/isLoading";
 
 const Navbar = () => {
@@ -23,8 +23,8 @@ const Navbar = () => {
 
         <div className="hidden md:flex gap-4">
           {isLoggedIn ? (
-            <>
-              <span className="text-sm text-gray-700">
+            <div className="flex gap-2 items-center justify-center">
+              <span className="text-sm text-gray-700 font-bold">
                 Welcome, {userEmail}!
               </span>
               <button
@@ -39,7 +39,7 @@ const Navbar = () => {
               >
                 Logout
               </button>
-            </>
+            </div>
           ) : (
             <>
               <Link to="/login">
