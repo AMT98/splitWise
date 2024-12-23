@@ -3,6 +3,7 @@ import { AuthApi } from "../API/api";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { signIn } from "../reducers/isLogged";
+import { setLoading, setLoaded } from "../reducers/isLoading";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,12 +14,13 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    dispatch(setLoading());
     try {
       const response = await AuthApi.login({
         email,
         password,
       });
-
+      dispatch(setLoaded());
       const { token } = response.data;
 
       dispatch(signIn());

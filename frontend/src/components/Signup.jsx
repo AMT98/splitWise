@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AuthApi } from "../API/api";
 import { useDispatch } from "react-redux";
 import { signIn } from "../reducers/isLogged";
+import { setLoading, setLoaded } from "../reducers/isLoading";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -15,6 +16,8 @@ const Signup = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    dispatch(setLoading());
+
     try {
       const response = await AuthApi.signup({
         email,
@@ -22,6 +25,8 @@ const Signup = () => {
         passwordConfirmation,
       });
       const { token, user } = response.data;
+      dispatch(setLoaded());
+
       localStorage.setItem("token", token);
       localStorage.setItem("email", email);
 

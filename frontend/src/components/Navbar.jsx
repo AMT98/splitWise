@@ -2,11 +2,12 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { signIn, signOut } from "../reducers/isLogged";
+import { setLoading, setLoaded } from "../reducers/isLoading";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const isLoggedIn = useSelector((state) => state.isLoggedIn);
   const userEmail = localStorage.getItem("email");
+  const isLoggedIn = useSelector((state) => state.isLoggedIn);
   const dispatch = useDispatch();
 
   return (
@@ -28,9 +29,11 @@ const Navbar = () => {
               </span>
               <button
                 onClick={() => {
+                  dispatch(setLoading());
                   localStorage.removeItem("token");
                   localStorage.removeItem("email");
                   dispatch(signOut());
+                  dispatch(setLoaded());
                 }}
                 className="border p-2 bg-red-500 text-white font-bold rounded-md hover:bg-red-600 transition-colors"
               >
@@ -83,7 +86,7 @@ const Navbar = () => {
               onClick={() => {
                 localStorage.removeItem("token");
                 localStorage.removeItem("email");
-                dispatch(signIn());
+                dispatch(signOut());
               }}
               className="block w-full text-center p-4 bg-red-500 text-white font-bold rounded-md mb-4 hover:bg-red-600"
             >
