@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Home = () => {
   return (
     <div className="bg-white min-h-screen overflow-x-hidden">
@@ -54,9 +56,11 @@ const Home = () => {
             <p className="mb-6">
               Join Splitwise now and make splitting bills simpler than ever!
             </p>
+            <Link to="/signup">
             <button className="rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
               Sign Up Now
             </button>
+            </Link>
           </section>
         </div>
       </div>

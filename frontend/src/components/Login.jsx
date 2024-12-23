@@ -1,6 +1,37 @@
 import { Link } from "react-router-dom";
+import { AuthApi } from "../API/api";
+import { useState } from "react";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await AuthApi.login({
+        email,
+        password,
+      });
+
+      console.log("Full Response:", response.data);
+      const { token, user } = response.data;
+      setMessage(`Welcome, ${user.email}!`);
+
+      localStorage.setItem("token", token);
+    } catch (error) {
+      console.error("Error during login:", error);
+
+      const errorMessage =
+        error.response?.data.error ||
+        error.response?.data.message ||
+        "Login failed";
+
+      setMessage(errorMessage);
+    }
+  };
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -11,7 +42,7 @@ const Login = () => {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form action="#" method="POST" className="space-y-6">
+          <form onSubmit={handleLogin} method="POST" className="space-y-6">
             <div>
               <div className="flex items-center justify-between">
                 <label
@@ -26,6 +57,8 @@ const Login = () => {
                   id="email"
                   name="email"
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                   autoComplete="current-email"
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
@@ -46,6 +79,8 @@ const Login = () => {
                   id="password"
                   name="password"
                   type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                   autoComplete="current-password"
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
