@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Alert from "./Alert";
 import { useState } from "react";
 import { AuthApi } from "../API/api";
@@ -8,6 +8,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -17,8 +18,11 @@ const Signup = () => {
         password,
         passwordConfirmation,
       });
-      setMessage(response.data.message);
       console.log(response.data.message);
+      const { token, user } = response.data;
+      localStorage.setItem("token", token);
+      setMessage(`Welcome, ${user.email}!`);
+      navigate("/");
     } catch (error) {
       console.error(error);
       setMessage(error.response?.data.error?.join(",") || "Signup failed");

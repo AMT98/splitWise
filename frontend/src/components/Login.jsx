@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthApi } from "../API/api";
 import { useState } from "react";
 
@@ -6,6 +6,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -18,6 +19,9 @@ const Login = () => {
       console.log("Full Response:", response.data);
       const { token, user } = response.data;
       setMessage(`Welcome, ${user.email}!`);
+      setEmail("");
+      setPassword("");
+      navigate("/");
 
       localStorage.setItem("token", token);
     } catch (error) {
