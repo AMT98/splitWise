@@ -4,8 +4,8 @@ Rails.application.routes.draw do
 
   post '/groups', to: 'groups#create'
   post '/groups/:group_id/memberships', to: 'group_memberships#create'
-  delete '/groups/:group_id/memberships/:id', to: 'group_memberships#destroy'
   get '/groups/:id/users', to: 'groups#group_users'
+  delete '/groups/:group_id/memberships/:id', to: 'group_memberships#destroy'
   
   get '/users/:user_id/bills', to: 'bills#user_bills'
   post '/bills', to: 'bills#create'
